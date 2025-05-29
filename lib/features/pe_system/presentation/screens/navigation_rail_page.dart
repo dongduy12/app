@@ -37,16 +37,16 @@ class _NavigationRailPageState extends State<NavigationRailPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-      print('NavigationRailPage: Setting SystemUIOverlayStyle, isDarkMode: $isDarkMode');
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: isDarkMode ? Colors.grey[900] : AppColors.background,
-        statusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
-        systemNavigationBarColor: isDarkMode ? Colors.grey[900] : AppColors.background,
-        systemNavigationBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
-      ));
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    //   print('NavigationRailPage: Setting SystemUIOverlayStyle, isDarkMode: $isDarkMode');
+    //   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    //     statusBarColor: isDarkMode ? Colors.grey[900] : AppColors.background,
+    //     statusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
+    //     systemNavigationBarColor: isDarkMode ? Colors.grey[900] : AppColors.background,
+    //     systemNavigationBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
+    //   ));
+    // });
   }
   @override
   Widget build(BuildContext context) {

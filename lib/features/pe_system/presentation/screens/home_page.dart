@@ -30,10 +30,10 @@ class HomePage extends StatelessWidget {
                 ),
                 _buildFunctionCard(
                   context,
-                  icon: Icons.settings,
-                  label: 'Settings',
+                  icon: Icons.run_circle,
+                  label: 'Retest',
                   onTap: () {
-                    print('Settings tapped');
+                    print('Retest');
                     // Thêm logic cho card khác nếu cần
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Chức năng đang phát triển')),

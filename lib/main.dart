@@ -46,13 +46,21 @@ import 'features/pe_system/data/repositories/code_repository_impl.dart';
 import 'features/pe_system/domain/usecases/manage_codes_usecase.dart';
 import 'core/constants/colors.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   final apiClient = ApiClient(baseUrl: 'http://10.220.130.119:9090/api/search');
   final remoteDataSource = RemoteDataSource(apiClient: apiClient);
   final repository = CodeRepositoryImpl(remoteDataSource: remoteDataSource);
   final useCase = ManageCodesUseCase(repository: repository);
   final codeProvider = CodeProvider(useCase: useCase);
   final themeProvider = ThemeProvider();
+
+  // Khởi tạo async cho các provider
+  await Future.wait([
+    codeProvider.initialize(),
+    themeProvider.initialize(),
+  ]);
 
   runApp(
     MultiProvider(
@@ -76,43 +84,42 @@ class _MyAppState extends State<MyApp> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Lấy themeMode từ ThemeProvider
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    bool isDarkMode;
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    bool isDarkMode = _getIsDarkMode(themeProvider, context);
 
-    // Xác định isDarkMode dựa trên themeMode
-    if (themeProvider.themeMode == ThemeMode.system) {
-      // Nếu themeMode là system, lấy từ hệ thống
-      isDarkMode = MediaQuery.of(context).platformBrightness == Brightness.dark;
-    } else {
-      // Nếu themeMode là light/dark, lấy trực tiếp
-      isDarkMode = themeProvider.themeMode == ThemeMode.dark;
-    }
-
-    print('MyApp: Setting SystemUIOverlayStyle, isDarkMode: $isDarkMode');
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: isDarkMode ? Colors.grey[900] : AppColors.background,
-      statusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
-      systemNavigationBarColor: isDarkMode ? Colors.grey[900] : AppColors.background,
-      systemNavigationBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
-    ));
+    print('MyApp: Setting SystemUIOverlayStyle (didChangeDependencies), isDarkMode: $isDarkMode');
+    _updateSystemUIOverlayStyle(isDarkMode);
   }
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final codeProvider = Provider.of<CodeProvider>(context, listen: false);
+    bool isDarkMode = _getIsDarkMode(themeProvider, context);
+    final appBarBackgroundColor = isDarkMode ? Colors.grey[900] : AppColors.background;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      print('MyApp: Applying SystemUIOverlayStyle (post-frame), isDarkMode: $isDarkMode');
+      _updateSystemUIOverlayStyle(isDarkMode);
+    });
+
     final lightTheme = ThemeData(
       primarySwatch: Colors.blue,
       brightness: Brightness.light,
       visualDensity: VisualDensity.adaptivePlatformDensity,
       scaffoldBackgroundColor: AppColors.background,
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.background,
+      appBarTheme: AppBarTheme(
+        backgroundColor: appBarBackgroundColor,
         elevation: 0,
-        iconTheme: IconThemeData(color: Colors.black87),
-        titleTextStyle: TextStyle(
+        iconTheme: const IconThemeData(color: Colors.black87),
+        titleTextStyle: const TextStyle(
           color: Colors.black87,
           fontSize: 20,
           fontWeight: FontWeight.bold,
+        ),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: appBarBackgroundColor,
+          statusBarIconBrightness: Brightness.dark,
         ),
       ),
       cardTheme: const CardTheme(
@@ -153,13 +160,17 @@ class _MyAppState extends State<MyApp> {
       visualDensity: VisualDensity.adaptivePlatformDensity,
       scaffoldBackgroundColor: Colors.grey[900],
       appBarTheme: AppBarTheme(
-        backgroundColor: Colors.grey[900],
+        backgroundColor: appBarBackgroundColor,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
         titleTextStyle: const TextStyle(
           color: Colors.white,
           fontSize: 20,
           fontWeight: FontWeight.bold,
+        ),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: appBarBackgroundColor,
+          statusBarIconBrightness: Brightness.light,
         ),
       ),
       cardTheme: const CardTheme(
@@ -201,8 +212,8 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         theme: lightTheme,
         darkTheme: darkTheme,
-        themeMode: Provider.of<ThemeProvider>(context).themeMode,
-        initialRoute: '/sign-in',
+        themeMode: themeProvider.themeMode,
+        initialRoute: codeProvider.isLoggedIn ? '/navigation' : '/sign-in',
         routes: {
           '/sign-in': (context) => const SignInPage(),
           '/navigation': (context) => const NavigationRailPage(),
@@ -211,5 +222,22 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
       ),
     );
+  }
+
+  bool _getIsDarkMode(ThemeProvider themeProvider, BuildContext context) {
+    if (themeProvider.themeMode == ThemeMode.system) {
+      return MediaQuery.of(context).platformBrightness == Brightness.dark;
+    } else {
+      return themeProvider.themeMode == ThemeMode.dark;
+    }
+  }
+
+  void _updateSystemUIOverlayStyle(bool isDarkMode) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: isDarkMode ? Colors.grey[900] : AppColors.background,
+      statusBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
+      systemNavigationBarColor: isDarkMode ? Colors.grey[900] : AppColors.background,
+      systemNavigationBarIconBrightness: isDarkMode ? Brightness.light : Brightness.dark,
+    ));
   }
 }

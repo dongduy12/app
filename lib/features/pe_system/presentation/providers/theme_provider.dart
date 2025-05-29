@@ -1,48 +1,37 @@
-//ThemeMode và thông báo khi theme thay đổi
-// ThemeProvider lưu trữ _themeMode (ThemeMode.system, light, hoặc dark).
-// setThemeMode cập nhật theme và thông báo cho các widget lắng nghe (như MaterialApp).
-//
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-//
-// class ThemeProvider with ChangeNotifier {
-//   ThemeMode _themeMode = ThemeMode.system;
-//
-//   ThemeMode get themeMode => _themeMode;
-//
-//   void setThemeMode(ThemeMode mode) {
-//     _themeMode = mode;
-//     notifyListeners();
-//   }
-// }
-//
-
 class ThemeProvider with ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.system;
-  static const _themeKey = 'theme_mode';
-
-  ThemeProvider() {
-    _loadTheme();
-  }
+  bool _isInitialized = false;
 
   ThemeMode get themeMode => _themeMode;
+  bool get isInitialized => _isInitialized;
 
-  Future<void> setThemeMode(ThemeMode mode) async {
-    _themeMode = mode;
-    notifyListeners();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_themeKey, mode.toString());
+  ThemeProvider() {
+    // Không gọi _loadTheme() ngay trong constructor
+  }
+
+  Future<void> initialize() async {
+    if (!_isInitialized) {
+      await _loadTheme();
+      _isInitialized = true;
+    }
   }
 
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    final themeString = prefs.getString(_themeKey);
-    if (themeString != null) {
-      _themeMode = ThemeMode.values.firstWhere(
-            (e) => e.toString() == themeString,
-      );
-      notifyListeners();
+    final savedTheme = prefs.getString('themeMode');
+    if (savedTheme != null) {
+      _themeMode = ThemeMode.values.firstWhere((mode) => mode.toString() == savedTheme);
     }
+    notifyListeners();
+  }
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    _themeMode = mode;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('themeMode', mode.toString());
+    notifyListeners();
   }
 }
