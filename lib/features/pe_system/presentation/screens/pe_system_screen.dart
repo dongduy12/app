@@ -166,7 +166,6 @@ class _PESystemScreenState extends State<PESystemScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Search'),
-        //backgroundColor: AppColors.background, // Đồng bộ với theme
         elevation: 0,
       ),
       body: SafeArea(

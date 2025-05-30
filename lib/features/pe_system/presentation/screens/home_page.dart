@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/core/constants/colors.dart';
+import 'package:mobile_app/features/pe_system/presentation/screens/retest_screen.dart';
 import 'pe_system_screen.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -33,10 +34,14 @@ class HomePage extends StatelessWidget {
                   icon: Icons.run_circle,
                   label: 'Retest',
                   onTap: () {
-                    print('Retest');
+                    print('Navigating to RetestScreen');
                     // Thêm logic cho card khác nếu cần
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Chức năng đang phát triển')),
+                    // ScaffoldMessenger.of(context).showSnackBar(
+                    //   const SnackBar(content: Text('Chức năng đang phát triển')),
+                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const RetestScreen()),
                     );
                   },
                 ),
