@@ -4,8 +4,6 @@ import '../../domain/entities/user_entity.dart';
 import '../../domain/entities/search_list_entity.dart';
 import '../../domain/repositories/code_repository.dart';
 import '../datasources/remote_datasource.dart';
-import '../models/code_model.dart';
-import '../models/user_model.dart';
 
 class CodeRepositoryImpl implements CodeRepository {
   final RemoteDataSource remoteDataSource;

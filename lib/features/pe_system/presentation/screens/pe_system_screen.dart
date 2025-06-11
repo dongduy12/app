@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:vibration/vibration.dart';
 import '../../../../core/constants/colors.dart';
 import '../providers/code_provider.dart';
 import '../widgets/code_item.dart';
@@ -64,11 +65,19 @@ class _PESystemScreenState extends State<PESystemScreen> {
     );
     print('isFound: $isFound, error: ${provider.error}');
 
+    //Kích hoạt âm thanh
     if (isFound) {
       _audioPlayer.play(AssetSource('sounds/drums.mp3')).catchError((e) {
         print('Audio error: $e');
         return null;
       });
+
+      //Kích hoạt rung
+      if(await Vibration.hasVibrator() ?? false) {
+        Vibration.vibrate(duration: 500); //Rung trong 500ms
+      }else {
+        print('Device does not support vibration');
+      }
 
       if (mounted) {
         showDialog(
@@ -166,6 +175,7 @@ class _PESystemScreenState extends State<PESystemScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Search'),
+        //backgroundColor: const Color(0xFF0055A5),
         elevation: 0,
       ),
       body: SafeArea(

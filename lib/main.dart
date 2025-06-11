@@ -37,6 +37,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'features/pe_system/presentation/providers/theme_provider.dart';
 import 'features/pe_system/presentation/providers/code_provider.dart';
+import 'features/pe_system/presentation/providers/dataCloud_provider.dart';
 import 'features/pe_system/presentation/screens/sign_in_page.dart';
 import 'features/pe_system/presentation/screens/navigation_rail_page.dart';
 import 'features/pe_system/presentation/screens/pe_system_screen.dart';
@@ -55,11 +56,13 @@ void main() async {
   final useCase = ManageCodesUseCase(repository: repository);
   final codeProvider = CodeProvider(useCase: useCase);
   final themeProvider = ThemeProvider();
+  final dataCloudProvider = DatacloudProvider(); // Khởi tạo DataCloudProvider
 
   // Khởi tạo async cho các provider
   await Future.wait([
     codeProvider.initialize(),
     themeProvider.initialize(),
+    dataCloudProvider.fetchDataCloud(),
   ]);
 
   runApp(
@@ -67,11 +70,13 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => codeProvider),
         ChangeNotifierProvider(create: (_) => themeProvider),
+        ChangeNotifierProvider(create: (_) => dataCloudProvider),
       ],
       child: const MyApp(),
     ),
   );
 }
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -122,7 +127,7 @@ class _MyAppState extends State<MyApp> {
           statusBarIconBrightness: Brightness.dark,
         ),
       ),
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -173,7 +178,7 @@ class _MyAppState extends State<MyApp> {
           statusBarIconBrightness: Brightness.light,
         ),
       ),
-      cardTheme: const CardTheme(
+      cardTheme: const CardThemeData(
         elevation: 4,
         color: Colors.grey,
         shape: RoundedRectangleBorder(

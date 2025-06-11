@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_app/core/constants/colors.dart';
 import 'package:mobile_app/features/pe_system/presentation/screens/retest_screen.dart';
+import 'data_cloud_screen.dart';
 import 'pe_system_screen.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -35,13 +36,21 @@ class HomePage extends StatelessWidget {
                   label: 'Retest',
                   onTap: () {
                     print('Navigating to RetestScreen');
-                    // Thêm logic cho card khác nếu cần
-                    // ScaffoldMessenger.of(context).showSnackBar(
-                    //   const SnackBar(content: Text('Chức năng đang phát triển')),
-                    // );
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const RetestScreen()),
+                    );
+                  },
+                ),
+                _buildFunctionCard(
+                  context,
+                  icon: Icons.cloud,
+                  label: 'DataCloud',
+                  onTap: () {
+                    print('Navigating to DataCloudScreen');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const DataCloudScreen()),
                     );
                   },
                 ),
