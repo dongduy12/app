@@ -5,6 +5,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../data/datasources/database_helper.dart';
+import '../../data/models/local_code_item_db.dart';
 import '../../domain/entities/code_entity.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/entities/search_list_entity.dart';
@@ -75,6 +77,7 @@ class CodeProvider with ChangeNotifier {
     if (!_isInitialized) {
       await _loadLoginStatus();
       _isInitialized = true;
+      notifyListeners();
     }
   }
 
@@ -140,6 +143,7 @@ class CodeProvider with ChangeNotifier {
     try {
       _searchLists = await useCase.getSearchList();
       print('Fetched _searchLists: $_searchLists');
+
       _selectedSearchListIndex = null;
       _recentlyScannedCodes = [];
       print('Set _selectedSearchListIndex: $_selectedSearchListIndex');
@@ -154,6 +158,7 @@ class CodeProvider with ChangeNotifier {
 
   Future<void> updateScannedStatus(int searchListId, String serialNumber, bool isScanned) async {
     try {
+      // Cập nhật danh sách _foundCodes và _codeList
       if (_foundCodes.contains(serialNumber)) {
         print('SerialNumber $serialNumber already found, updating position');
         _orderedFoundCodes.remove(serialNumber);
@@ -182,6 +187,8 @@ class CodeProvider with ChangeNotifier {
         notifyListeners();
         return;
       }
+
+      // Gọi API để cập nhật trạng thái trên server
       final success = await useCase.updateScannedStatus(searchListId, serialNumber, isScanned);
       if (success) {
         _foundCodes.add(serialNumber);
@@ -221,6 +228,8 @@ class CodeProvider with ChangeNotifier {
       return false;
     }
     code = code.trim();
+
+    // Cập nhật trạng thái isFound
     await updateScannedStatus(searchListId, code, true);
     return foundCodes.contains(code);
   }
@@ -268,6 +277,9 @@ class CodeProvider with ChangeNotifier {
   }
 
   // Thêm phương thức updateScannedSerialNumber
+
+  //===========CHUC NANG RETEST=============
+
   void updateScannedSerialNumber(String serialNumber) {
     _scannedSerialNumber = serialNumber;
     _retestResult = null;

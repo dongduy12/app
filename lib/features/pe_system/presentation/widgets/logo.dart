@@ -11,7 +11,13 @@ class Logo extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        FlutterLogo(size: isSmallScreen ? 100 : 200),
+        //FlutterLogo(size: isSmallScreen ? 100 : 200),
+        Image.asset(
+          'assets/logo/logo.png', // Đường dẫn đến logo của bạn
+          width: isSmallScreen ? 100 : 200, // Kích thước tương ứng với màn hình
+          height: isSmallScreen ? 100 : 200,
+          fit: BoxFit.contain, // Đảm bảo logo không bị méo
+        ),
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(

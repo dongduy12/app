@@ -1,10 +1,19 @@
+import java.util.Properties
+import java.io.FileInputStream
 plugins {
     id("com.android.application")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
-
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    // Sử dụng try-with-resources để xử lý FileInputStream một cách an toàn
+    FileInputStream(keystorePropertiesFile).use { fis ->
+        keystoreProperties.load(fis)
+    }
+}
 android {
     namespace = "com.example.mobile_app"
     compileSdk = flutter.compileSdkVersion
@@ -30,12 +39,20 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
-
+    signingConfigs {
+        create("release") { // Sử dụng khối create cho Kotlin DSL
+            keyAlias = keystoreProperties["keyAlias"] as String? // Truy cập thuộc tính như map và ép kiểu
+            keyPassword = keystoreProperties["keyPassword"] as String?
+            storeFile = file(keystoreProperties["storeFile"] as String? ?: "") // Cung cấp giá trị mặc định nếu null
+            storePassword = keystoreProperties["storePassword"] as String?
+        }
+    }
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true // Trong Kotlin DSL, nó là isMinifyEnabled
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 }

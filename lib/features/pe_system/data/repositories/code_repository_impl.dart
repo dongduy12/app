@@ -1,3 +1,5 @@
+import 'package:mobile_app/features/pe_system/data/datasources/local_datasource.dart';
+
 import '../../../../core/error/exceptions.dart';
 import '../../domain/entities/code_entity.dart';
 import '../../domain/entities/user_entity.dart';
@@ -8,7 +10,9 @@ import '../datasources/remote_datasource.dart';
 class CodeRepositoryImpl implements CodeRepository {
   final RemoteDataSource remoteDataSource;
 
-  CodeRepositoryImpl({required this.remoteDataSource});
+  CodeRepositoryImpl({
+    required this.remoteDataSource
+  });
 
   @override
   Future<List<SearchListEntity>> getSearchList() async {
@@ -68,4 +72,5 @@ class CodeRepositoryImpl implements CodeRepository {
   Future<bool> checkCode(String serialNumber) {
     throw UnimplementedError(); // Không còn cần thiết vì dùng updateScannedStatus
   }
+
 }

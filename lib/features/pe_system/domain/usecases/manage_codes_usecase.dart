@@ -27,4 +27,5 @@ class ManageCodesUseCase {
   Future<UserEntity> login(String email, String password) async {
     return await repository.login(email, password);
   }
+
 }

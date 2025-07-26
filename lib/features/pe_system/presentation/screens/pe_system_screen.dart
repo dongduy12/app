@@ -67,9 +67,10 @@ class _PESystemScreenState extends State<PESystemScreen> {
 
     //Kích hoạt âm thanh
     if (isFound) {
-      _audioPlayer.play(AssetSource('sounds/drums.mp3')).catchError((e) {
+      _audioPlayer.play(AssetSource('sounds/iphone.mp3')).catchError((e) {
         print('Audio error: $e');
         return null;
+
       });
 
       //Kích hoạt rung

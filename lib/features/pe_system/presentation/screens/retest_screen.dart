@@ -49,7 +49,7 @@ class _RetestScreenState extends State<RetestScreen> {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Retest'),
-            backgroundColor: const Color(0xFF0055A5),
+            //backgroundColor: const Color(0xFF0055A5),
             elevation: 0,
           ),
           body: Padding(

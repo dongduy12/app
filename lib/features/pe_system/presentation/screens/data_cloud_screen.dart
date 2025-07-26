@@ -120,15 +120,12 @@ class _DataCloudScreenState extends State<DataCloudScreen> {
       builder: (context, provider, child) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text(
-              'DataCloud',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
-            backgroundColor: const Color(0xFF0055A5),
-            elevation: 4,
+            title: const Text('DataCloud'),
+            //backgroundColor: const Color(0xFF0055A5),
+            elevation: 0,
             actions: [
               IconButton(
-                icon: const Icon(Icons.search, color: Colors.white),
+                icon: const Icon(Icons.search, color: Colors.black),
                 onPressed: () {
                   showDialog(
                     context: context,
